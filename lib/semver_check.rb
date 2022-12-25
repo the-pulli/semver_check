@@ -28,15 +28,15 @@ module SemverCheck
       s: 0
     }.freeze
 
-    MAPPING_TABLE = [
-      %w[n[nso]{2} n],
-      %w[sn[nso]{1} n],
+   MAPPING_TABLE = [
+      %w[n n],
+      %w[sn n],
       %w[ssn n],
-      %w[o[nso]{2} o],
-      %w[so[nso]{1} o],
+      %w[o o],
+      %w[so o],
       %w[sso o],
       %w[sss s]
-    ].freeze
+    ]
 
     ORDER = %i[major minor patch prerelease].freeze
 
@@ -95,7 +95,7 @@ module SemverCheck
 
     def match(comparison)
       result = MAPPING_TABLE.map do |m|
-        m[1] if comparison.match?(/\A#{m[0]}\Z/)
+        m.last if comparison.start_with? m.first
       end.compact
 
       raise "Too many results" if result.length > 1
