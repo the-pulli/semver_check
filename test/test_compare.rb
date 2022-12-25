@@ -3,7 +3,7 @@
 require "test_helper"
 
 # Test CompareClass
-class CompareTest < Minitest::Test
+class TestCompare < Minitest::Test
   include SemverCheck
 
   def setup
@@ -140,7 +140,7 @@ class CompareTest < Minitest::Test
     assert_equal "1.2.3", Compare.new("1.2.3").to_s
   end
 
-  def test_raises_argument_error_with_invalid_semver_version
+  def test_raises_argument_error_with_invalid_semver_versions_including_the_official_test_strings
     %w[
       1.2.3.2
       1.2.3invalidprerelease
