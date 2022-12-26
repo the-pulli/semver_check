@@ -16,7 +16,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 The Compare class includes the Comparable module, so all methods from there and in addition != are available.
 
-````ruby
+```ruby
 SemverCheck::Compare.new("1.2.3") < SemverCheck::Compare.new("1.2.4") # true
 SemverCheck::Compare.new("1.2.3") > SemverCheck::Compare.new("1.2.2") # true
 SemverCheck::Compare.new("1.2.3") <= SemverCheck::Compare.new("1.2.3") # true
@@ -24,9 +24,9 @@ SemverCheck::Compare.new("1.2.3") >= SemverCheck::Compare.new("1.2.3") # true
 # works also with prerelease
 SemverCheck::Compare.new("1.2.3-alpha") < SemverCheck::Compare.new("1.2.3-beta") # true
 SemverCheck::Compare.new("1.2.3-alpha.2") > SemverCheck::Compare.new("1.2.3-alpha.1") # true
-````
+```
 
-You get the idea. If you wanna know more check out the `test/test_compare.rb` file.
+You get the idea. If you wanna know more check out the [test/test_compare.rb](https://github.com/the-pulli/semver_check/blob/main/test/test_compare.rb) file.
 
 ## Development
 
