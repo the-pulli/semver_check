@@ -76,6 +76,20 @@ class TestCompare < Minitest::Test
     assert_equal false, Compare.new("1.2.2+build.1") != Compare.new("1.2.2+build.1")
   end
 
+  def test_the_edge_case_with_buildmetadata
+    assert_equal true , @semver > Compare.new("1.2.3+build")
+    assert_equal true , @semver >= Compare.new("1.2.3+build")
+    assert_equal true , Compare.new("1.2.3+build") < @semver
+    assert_equal true , Compare.new("1.2.3+build") <= @semver
+    assert_equal true , Compare.new("1.2.3+build") == Compare.new("1.2.3+build")
+    assert_equal true , Compare.new("1.2.3+build.somemoreinfo") == Compare.new("1.2.3+build")
+  end
+
+  def test_remaining_comparable_methods
+    assert_equal true, @semver.between?(Compare.new("1.2.2"), Compare.new("1.2.4"))
+    assert_equal [Compare.new("1.2.2"), @semver, Compare.new("1.2.4")], [@semver, Compare.new("1.2.4"), Compare.new("1.2.2")].sort
+  end
+
   def test_the_version_getter_without_prerelease_and_build
     assert_equal({ semver: "1.2.3",
                    major: 1,
@@ -95,39 +109,7 @@ class TestCompare < Minitest::Test
   end
 
   def test_if_semver_regex_is_valid_with_their_test_strings
-    %w[
-      0.0.4
-      1.2.3
-      10.20.30
-      1.1.2-prerelease+meta
-      1.1.2+meta
-      1.1.2+meta-valid
-      1.0.0-alpha
-      1.0.0-beta
-      1.0.0-alpha.beta
-      1.0.0-alpha.beta.1
-      1.0.0-alpha.1
-      1.0.0-alpha0.valid
-      1.0.0-alpha.0valid
-      1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay
-      1.0.0-rc.1+build.1
-      2.0.0-rc.1+build.123
-      1.2.3-beta
-      10.2.3-DEV-SNAPSHOT
-      1.2.3-SNAPSHOT-123
-      1.0.0
-      2.0.0
-      1.1.7
-      2.0.0+build.1848
-      2.0.1-alpha.1227
-      1.0.0-alpha+beta
-      1.2.3----RC-SNAPSHOT.12.9.1--.12+788
-      1.2.3----R-S.12.9.1--.12+meta
-      1.2.3----RC-SNAPSHOT.12.9.1--.12
-      1.0.0+0.build.1-rc.10000aaa-kk-0.1
-      99999999999999999999999.999999999999999999.99999999999999999
-      1.0.0-0A.is.legal
-    ].each do |v|
+    File.read(File.join(__dir__, "fixtures", "valid.txt")).each_line(chomp: true) do |v|
       assert_equal v, Compare.new(v).to_s
     end
   end
@@ -141,55 +123,7 @@ class TestCompare < Minitest::Test
   end
 
   def test_raises_argument_error_with_invalid_semver_versions_including_the_official_test_strings
-    %w[
-      1.2.3.2
-      1.2.3invalidprerelease
-      1.2.3-prerelease=invalidbuild
-      1.2.3-prerelease_1
-      00.2.3-prerelease
-      0.00.3-prerelease
-      0.0.00-prerelease
-      1
-      1.2
-      1.2.3-0123
-      1.2.3-0123.0123
-      1.1.2+.123
-      +invalid
-      -invalid
-      -invalid+invalid
-      -invalid.01
-      alpha
-      alpha.beta
-      alpha.beta.1
-      alpha.1
-      alpha+beta
-      alpha_beta
-      alpha.
-      alpha..
-      beta
-      1.0.0-alpha_beta
-      -alpha.
-      1.0.0-alpha..
-      1.0.0-alpha..1
-      1.0.0-alpha...1
-      1.0.0-alpha....1
-      1.0.0-alpha.....1
-      1.0.0-alpha......1
-      1.0.0-alpha.......1
-      01.1.1
-      1.01.1
-      1.1.01
-      1.2
-      1.2.3.DEV
-      1.2-SNAPSHOT
-      1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788
-      1.2-RC-SNAPSHOT
-      -1.0.3-gamma+b7718
-      +justmeta
-      9.8.7+meta+meta
-      9.8.7-whatever+meta+meta
-      99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12
-    ].each do |v|
+    File.read(File.join(__dir__, "fixtures", "invalid.txt")).each_line(chomp: true) do |v|
       e = assert_raises(ArgumentError) { Compare.new(v) }
       assert_equal "No proper Semantic Versioning given", e.message
     end

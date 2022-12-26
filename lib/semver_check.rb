@@ -22,21 +22,15 @@ module SemverCheck
                     )
                   \Z/x
 
-    INT_RESULT = {
-      n: 1,
-      o: -1,
-      s: 0
-    }.freeze
-
-   MAPPING_TABLE = [
-      %w[n n],
-      %w[sn n],
-      %w[ssn n],
-      %w[o o],
-      %w[so o],
-      %w[sso o],
-      %w[sss s]
-    ]
+    MAPPING_TABLE = [
+      %w[n 1],
+      %w[sn 1],
+      %w[ssn 1],
+      %w[o -1],
+      %w[so -1],
+      %w[sso -1],
+      %w[sss 0]
+    ].freeze
 
     ORDER = %i[major minor patch prerelease].freeze
 
@@ -72,7 +66,7 @@ module SemverCheck
           "o"
         end
       end.join
-      prerelease_sort(other, comparison)
+      buildmetadata_sort(other, prerelease_sort(other, comparison))
     end
 
     def prerelease_sort(other, comparison)
@@ -93,14 +87,26 @@ module SemverCheck
       end
     end
 
+    def buildmetadata_sort(other, comparison)
+      v_build = @version[:buildmetadata]
+      o_build = other.version[:buildmetadata]
+      if comparison.zero?
+        if v_build.nil? && !o_build.nil?
+          1
+        elsif !v_build.nil? && o_build.nil?
+          -1
+        else
+          0
+        end
+      else
+        comparison
+      end
+    end
+
     def match(comparison)
-      result = MAPPING_TABLE.map do |m|
-        m.last if comparison.start_with? m.first
-      end.compact
-
-      raise "Too many results" if result.length > 1
-
-      INT_RESULT[result.first.to_sym]
+      MAPPING_TABLE.find do |m|
+        comparison.start_with?(m.first)
+      end.last.to_i
     end
 
     def prepare_version(version)
@@ -109,7 +115,7 @@ module SemverCheck
 
       version = version.named_captures.transform_keys(&:to_sym)
       # convert major, minor and patch to int
-      ORDER.take(3).each { |part| version[part] = version[part].to_i }
+      ORDER.first(3).each { |part| version[part] = version[part].to_i }
       version
     end
   end
