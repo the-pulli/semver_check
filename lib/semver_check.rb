@@ -23,16 +23,16 @@ module SemverCheck
                   \Z/x
 
     MAPPING_TABLE = [
-      %w[n 1],
-      %w[sn 1],
-      %w[ssn 1],
-      %w[o -1],
-      %w[so -1],
-      %w[sso -1],
-      %w[sss 0]
+      ["n", 1],
+      ["sn", 1],
+      ["ssn", 1],
+      ["o", -1],
+      ["so", -1],
+      ["sso", -1],
+      ["sss", 0]
     ].freeze
 
-    ORDER = %i[major minor patch prerelease].freeze
+    VERSION_PARTS = %i[major minor patch].freeze
 
     attr_reader :version
 
@@ -57,7 +57,7 @@ module SemverCheck
     private
 
     def comparison(other)
-      comparison = ORDER.take(3).map do |part|
+      comparison = VERSION_PARTS.map do |part|
         if @version[part] == other.version[part]
           "s"
         elsif @version[part] > other.version[part]
@@ -106,7 +106,7 @@ module SemverCheck
     def match(comparison)
       MAPPING_TABLE.find do |m|
         comparison.start_with?(m.first)
-      end.last.to_i
+      end.last
     end
 
     def prepare_version(version)
@@ -115,7 +115,7 @@ module SemverCheck
 
       version = version.named_captures.transform_keys(&:to_sym)
       # convert major, minor and patch to int
-      ORDER.first(3).each { |part| version[part] = version[part].to_i }
+      VERSION_PARTS.each { |part| version[part] = version[part].to_i }
       version
     end
   end

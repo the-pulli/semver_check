@@ -1,6 +1,6 @@
 # SemverCheck
 
-TODO: Delete this and the text above, and describe your gem
+A simple gem containing one class `SemverCheck::Compare` to compare SemVer strings.
 
 ## Installation
 
@@ -14,7 +14,19 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+The Compare class includes the Comparable module, so all methods from there and in addition != are available.
+
+````ruby
+SemverCheck::Compare.new("1.2.3") < SemverCheck::Compare.new("1.2.4") # true
+SemverCheck::Compare.new("1.2.3") > SemverCheck::Compare.new("1.2.2") # true
+SemverCheck::Compare.new("1.2.3") <= SemverCheck::Compare.new("1.2.3") # true
+SemverCheck::Compare.new("1.2.3") >= SemverCheck::Compare.new("1.2.3") # true
+# works also with prerelease
+SemverCheck::Compare.new("1.2.3-alpha") < SemverCheck::Compare.new("1.2.3-beta") # true
+SemverCheck::Compare.new("1.2.3-alpha.2") > SemverCheck::Compare.new("1.2.3-alpha.1") # true
+````
+
+You get the idea. If you wanna know more check out the `test/test_compare.rb` file.
 
 ## Development
 
@@ -24,7 +36,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/semver_check.
+Bug reports and pull requests are welcome on GitHub at https://github.com/the-pulli/semver_check.
 
 ## License
 
