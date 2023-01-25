@@ -1,7 +1,5 @@
 # SemverCheck
 
-[![Build Status](https://app.travis-ci.com/the-pulli/semver_check.svg?branch=main)](https://app.travis-ci.com/the-pulli/semver_check)
-
 A simple gem containing one class `SemverCheck::Compare` to compare SemVer strings.
 
 ## Installation
