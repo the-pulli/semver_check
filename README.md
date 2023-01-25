@@ -1,5 +1,7 @@
 # SemverCheck
 
+![Status](https://github.com/the-pulli/semver_check/actions/workflows/main.yml/badge.svg)
+
 A simple gem containing one class `SemverCheck::Compare` to compare SemVer strings.
 
 ## Installation
